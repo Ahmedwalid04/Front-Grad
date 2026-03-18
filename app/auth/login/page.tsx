@@ -1,0 +1,162 @@
+﻿"use client";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { authService } from "@/services/auth.service";
+import AuthLayout from "@/app/auth/layout";
+import InputField from "@/components/ui/input-field";
+import { Button } from "@/components/ui/button"
+import AlertMessage from "@/components/ui/alert-message";
+
+/**
+ * Login page — uses Supabase signInWithPassword under the hood.
+ *
+ * On success Supabase stores the JWT (access_token) in localStorage.
+ * The AuthProvider picks it up via onAuthStateChange and updates
+ * the React context. All subsequent API calls to .NET include the
+ * token automatically via the HttpClient interceptor.
+ */
+export default function Login() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const callbackUrlRaw = searchParams.get("callbackUrl") || "";
+  const callbackUrl = callbackUrlRaw.startsWith("/") ? callbackUrlRaw : "/dashboard";
+
+  // -- Form state --
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  // -- Hover state for styling --
+  const [signHover, setSignHover] = useState(false);
+  const [googleHover, setGoogleHover] = useState(false);
+  const [resetHover, setResetHover] = useState(false);
+  const [registerHover, setRegisterHover] = useState(false);
+
+  // -- Handlers --
+  useEffect(() => {
+    const urlError = searchParams.get("error");
+    if (urlError) {
+      setError(urlError);
+    }
+  }, [searchParams]);
+
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      // Calls supabase.auth.signInWithPassword — stores session in localStorage
+      const data = await authService.signIn({ email, password });
+      console.log("[Login] sign-in success:", data.user?.email);
+
+      // Use window.location for a full page reload so Supabase's
+      // localStorage session is read fresh by the AuthProvider on mount.
+      // This avoids the race condition where ProtectedRoute checks auth
+      // before onAuthStateChange has fired.
+      window.location.href = callbackUrl;
+    } catch (err: any) {
+      console.error("[Login] sign-in error:", err);
+      setError(err.message ?? "Login failed. Please check your credentials.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleGoogleLogin() {
+    try {
+      await authService.signInWithGoogle(callbackUrl);
+      // Supabase redirects to Google — no further code runs here
+    } catch (err: any) {
+      setError(err.message ?? "Google login failed.");
+    }
+  }
+
+  return (
+    <AuthLayout
+      CardTitle="Sign In"
+      Message="Don't have an account yet"
+      Link="/auth/register"
+      LinkText="Register Here"
+    >
+      <form
+        onSubmit={handleLogin}
+      >
+
+        <AlertMessage message={error} type="error" />
+
+        <InputField
+          label="Email"
+          id="login-email"
+          type="email"
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+
+        <InputField
+          label="Password"
+          id="login-password"
+          type="password"
+          placeholder="Enter your password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          isMargin={false}
+        />
+
+        <Button
+          type="button"
+          variant="text"
+          textContent={{ before: "Forgot your password -", buttonText: "Reset Here" }}
+          onClick={() => router.push("/auth/reset-password")}
+        />
+
+        <div
+          style={{
+            display: "flex",
+            marginBottom: "3vh",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+
+
+          <Button
+            type="submit"
+            variant="primary"
+            style={{ marginLeft: "5vh" }}
+          >
+            {loading ? "Signing in..." : "Sign In"}
+          </Button>
+
+          <div
+            style={{
+              textAlign: "center",
+              marginInline: "1vh",
+              color: "var(--text-grey)",
+              fontFamily: "var(--font-nova-square",
+              fontSize: "3vh",
+            }}
+          >
+            or
+          </div>
+
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={handleGoogleLogin}
+            style={{ marginRight: "5vh" }}
+          >
+            <img src="/auth/Google.svg" alt="Google" style={{ height: "4vh" }} />
+            Sign in using Google
+          </Button>
+        </div>
+
+
+      </form>
+    </AuthLayout>
+  );
+}

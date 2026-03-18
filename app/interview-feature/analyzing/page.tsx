@@ -1,0 +1,207 @@
+"use client";
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import InterviewLayout from '@/components/ui/interview';
+import { interviewService } from '@/services/interview.service';
+import type { APIFollowup } from '@/types';
+import { useInterviewFlow } from '@/hooks';
+
+export default function AnalyzingPage() {
+  const router = useRouter();
+  const {
+    interviewType,
+    sessionId,
+    questionId,
+    answerId,
+    currentQ,
+    questions,
+    buildRecordingUrl,
+  } = useInterviewFlow();
+  
+  const [isFinished, setIsFinished] = useState(false);
+  const [isEvaluating, setIsEvaluating] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [followup, setFollowup] = useState<APIFollowup | null>(null);
+  const missingContext = !sessionId || !questionId;
+
+  useEffect(() => {
+    if (missingContext) {
+      return;
+    }
+
+    let alive = true;
+
+    const evaluate = async () => {
+      setIsEvaluating(true);
+      setErrorMessage('');
+      setFollowup(null);
+
+      const response = await interviewService.evaluateAnswer(sessionId, questionId);
+      if (!alive) return;
+
+      if (!response.success || !response.data) {
+        setErrorMessage(response.message || 'Evaluation failed. Please try again.');
+        setIsFinished(false);
+        setIsEvaluating(false);
+        return;
+      }
+
+      const isFollowupRequired =
+        Boolean(response.data.followup_recommended) || Boolean(response.data.followup);
+
+      if (isFollowupRequired) {
+        if (!answerId) {
+          setErrorMessage('Follow-up is required but answer context is missing. Please submit your answer again.');
+          setIsFinished(false);
+          setIsEvaluating(false);
+          return;
+        }
+
+        const followupResponse = await interviewService.getFollowupByAnswerId(answerId);
+        if (!alive) return;
+
+        if (!followupResponse.success || !followupResponse.data) {
+          setErrorMessage(followupResponse.message || 'Could not load follow-up question. Please try again.');
+          setIsFinished(false);
+          setIsEvaluating(false);
+          return;
+        }
+
+        setFollowup(followupResponse.data);
+      }
+
+      setIsFinished(true);
+      setIsEvaluating(false);
+    };
+
+    evaluate();
+
+    return () => {
+      alive = false;
+    };
+  }, [sessionId, questionId, answerId, missingContext]);
+
+  const handleNext = () => {
+    if (followup) {
+      router.push(buildRecordingUrl({
+        type: interviewType,
+        sessionId,
+        q: String(currentQ),
+        followup: followup.text,
+        questionId: null,
+      }));
+      return;
+    }
+
+    if (currentQ < questions.length) {
+      const nextQuestion = questions[currentQ];
+      router.push(buildRecordingUrl({
+        type: interviewType,
+        sessionId,
+        q: String(currentQ + 1),
+        questionId: nextQuestion?.questionId || null,
+        followup: null,
+      }));
+    } else {
+      router.push('/features/interview');
+    }
+  };
+
+  return (
+    <InterviewLayout
+      questions={questions}
+      currentActiveId={currentQ}
+      onQuestionClick={(id: number) => {
+        const target = questions.find((q) => q.id === id);
+        router.push(buildRecordingUrl({
+          type: interviewType,
+          sessionId,
+          q: String(id),
+          questionId: target?.questionId || null,
+          followup: null,
+        }));
+      }}
+      closeIconSrc="/interview/Close.svg"
+    >
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        textAlign: 'center',
+        width: '100%',
+        paddingBottom: '40px' 
+      }}>
+        
+        {/* Conditional Text Section */}
+        <h2 style={{ 
+          color: 'white', 
+          fontSize: '24px', 
+          fontFamily: 'var(--font-nova-square)', 
+          fontWeight: 400,
+          lineHeight: '1.6',
+          marginBottom: '50px' 
+        }}>
+          {missingContext ? (
+            <>Missing session or question context. Please restart interview flow.</>
+          ) : errorMessage ? (
+            <>{errorMessage}</>
+          ) : isEvaluating ? (
+            <>
+              Our Model is analyzing your answers,<br />
+              Give us a moment
+            </>
+          ) : isFinished && followup ? (
+            <>
+              We need a follow-up answer before final scoring:<br />
+              {followup.text}
+            </>
+          ) : isFinished ? (
+            <>
+              Our Model has finished the analysis,<br />
+              Ready for the next question?
+            </>
+          ) : (
+            <>
+              Evaluation is not complete yet.<br />
+              Please try again
+            </>
+          )}
+        </h2>
+
+        <div style={{ marginBottom: '60px' }}>
+          <img 
+            src="/interview/analyzing.svg" 
+            alt="AI Analysis" 
+            style={{ 
+              width: '300px', 
+              height: 'auto',
+          
+            }} 
+          />
+        </div>
+
+        {/* Conditional Action Button */}
+        <button 
+          onClick={handleNext}
+          disabled={!isFinished}
+          style={{
+            backgroundColor: isFinished ? '#d4ff47' : '#BABABA', // Green when finished, Grey while analyzing
+            color: '#1a1a1a',
+            padding: '12px 60px',
+            borderRadius: '14px',
+            border: 'none',
+            fontSize: '18px',
+            fontFamily: 'var(--font-nova-square)',
+            fontWeight: 600,
+            cursor: isFinished ? 'pointer' : 'wait',
+            transition: 'all 0.5s ease', // Smooth color transition
+            opacity: isFinished ? 1 : 0.8
+          }}
+        >
+          {followup ? 'Answer Follow-up' : 'Next Question'}
+        </button>
+      </div>
+    </InterviewLayout>
+  );
+}
