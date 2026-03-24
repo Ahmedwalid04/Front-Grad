@@ -37,21 +37,38 @@ export default function LandingPage() {
           <a href="#toolkit" style={{ color: "#fff", textDecoration: "none" }}>Toolkit</a>
           <a href="#journey" style={{ color: "#fff", textDecoration: "none" }}>Journey Flow</a>
         </nav>
-        <button
-          onClick={() => router.push("/auth/login")}
-          style={{
-            padding: "10px 35px",
-            borderRadius: "12px",
-            border: "3px solid #ffffff",
-            fontWeight: "Bold",
-            fontFamily: "var(--font-jura)",
-            fontSize: "1vw",
-            cursor: "pointer",
-            backgroundColor: "var(--bg-color)",
-            color: "#fff"
-          }}>
-          Sign In
-        </button>
+        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+          <button
+            onClick={() => router.push("/roadmap-demo")}
+            style={{
+              padding: "10px 35px",
+              borderRadius: "12px",
+              border: "2px solid #B8EF46",
+              fontWeight: "Bold",
+              fontFamily: "var(--font-jura)",
+              fontSize: "1vw",
+              cursor: "pointer",
+              backgroundColor: "#B8EF46",
+              color: "#000"
+            }}>
+            View Demo
+          </button>
+          <button
+            onClick={() => router.push("/auth/login")}
+            style={{
+              padding: "10px 35px",
+              borderRadius: "12px",
+              border: "3px solid #ffffff",
+              fontWeight: "Bold",
+              fontFamily: "var(--font-jura)",
+              fontSize: "1vw",
+              cursor: "pointer",
+              backgroundColor: "var(--bg-color)",
+              color: "#fff"
+            }}>
+            Sign In
+          </button>
+        </div>
       </header>
 
       {/* Home */}
