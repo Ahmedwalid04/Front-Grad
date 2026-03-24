@@ -2,7 +2,7 @@
 
 import { useEffect, useState, CSSProperties } from "react";
 import { useParams } from "next/navigation";
-import { SectionBlock } from "@/components/roadmap/section-block";
+import { RoadmapPreview } from "@/components/roadmap/roadmap-preview";
 import { roadmapService } from "@/lib/api/roadmap";
 import type { Roadmap } from "@/types/roadmap";
 
@@ -14,6 +14,7 @@ export default function RoadmapDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loadingStepId, setLoadingStepId] = useState<string | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
     const fetchRoadmap = async () => {
@@ -79,8 +80,16 @@ export default function RoadmapDetailPage() {
 
   const headerStyle: CSSProperties = {
     display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    gap: "1rem",
+  };
+
+  const headerContentStyle: CSSProperties = {
+    display: "flex",
     flexDirection: "column",
     gap: "0.5rem",
+    flex: 1,
   };
 
   const titleStyle: CSSProperties = {
@@ -114,41 +123,56 @@ export default function RoadmapDetailPage() {
     border: "1px solid #3d2020",
   };
 
-  const sectionsContainerStyle: CSSProperties = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "2rem",
+  const contentStyle: CSSProperties = {
+    display: isFullscreen ? "none" : "block",
   };
+
+  if (isFullscreen) {
+    return (
+      <>
+        {roadmap && (
+          <RoadmapPreview
+            roadmap={roadmap}
+            isFullscreen={true}
+            onStepToggle={handleStepToggle}
+            onFullscreenToggle={() => setIsFullscreen(false)}
+            loadingStepId={loadingStepId ?? undefined}
+          />
+        )}
+      </>
+    );
+  }
 
   return (
     <div style={containerStyle}>
       <div style={headerStyle}>
-        <h1 style={titleStyle}>
-          {loading ? "Loading..." : roadmap?.title || "Roadmap"}
-        </h1>
-        <p style={subtitleStyle}>
-          {loading
-            ? ""
-            : `${roadmap?.sections.length || 0} sections to master`}
-        </p>
+        <div style={headerContentStyle}>
+          <h1 style={titleStyle}>
+            {loading ? "Loading..." : roadmap?.title || "Roadmap"}
+          </h1>
+          <p style={subtitleStyle}>
+            {loading
+              ? ""
+              : `${roadmap?.sections.length || 0} sections to master`}
+          </p>
+        </div>
       </div>
 
-      {loading && <div style={loadingStyle}>Loading roadmap details...</div>}
+      <div style={contentStyle}>
+        {loading && <div style={loadingStyle}>Loading roadmap details...</div>}
 
-      {error && <div style={errorStyle}>{error}</div>}
+        {error && <div style={errorStyle}>{error}</div>}
 
-      {!loading && !error && roadmap && (
-        <div style={sectionsContainerStyle}>
-          {roadmap.sections.map((section) => (
-            <SectionBlock
-              key={section.id}
-              section={section}
-              onStepToggle={handleStepToggle}
-              loadingStepId={loadingStepId ?? undefined}
-            />
-          ))}
-        </div>
-      )}
+        {!loading && !error && roadmap && (
+          <RoadmapPreview
+            roadmap={roadmap}
+            isFullscreen={false}
+            onStepToggle={handleStepToggle}
+            onFullscreenToggle={() => setIsFullscreen(true)}
+            loadingStepId={loadingStepId ?? undefined}
+          />
+        )}
+      </div>
     </div>
   );
 }
