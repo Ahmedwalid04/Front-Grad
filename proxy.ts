@@ -20,6 +20,7 @@ const PUBLIC_ROUTES = new Set([
   "/auth/update-password",
   "/auth/callback",
   "/forgot-password",
+  "/roadmap-demo",
 ]);
 const AUTH_ROUTES = new Set(["/auth/login", "/auth/register"]);
 const TOKEN_COOKIE = "careerics_token";
