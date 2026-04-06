@@ -116,63 +116,89 @@ export default function RoadmapDemoPage() {
     flex: 1,
     display: "flex",
     flexDirection: "column",
-    padding: "30px 40px",
+    padding: "30px",
     overflow: "auto",
+    gap: "20px",
   };
 
-  const headerStyle: CSSProperties = {
-    marginBottom: "25px",
+  const folderContainerStyle: CSSProperties = {
+    backgroundColor: "#C4C4C4",
+    borderRadius: "24px",
+    padding: "25px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "20px",
+    flex: 1,
+    position: "relative",
+  };
+
+  const headerContainerStyle: CSSProperties = {
+    display: "flex",
+    gap: "15px",
+    alignItems: "center",
   };
 
   const titleStyle: CSSProperties = {
-    fontSize: "36px",
+    fontSize: "28px",
     fontWeight: "bold",
-    marginBottom: "10px",
     fontFamily: "var(--font-nova-square)",
+    color: "#1a1a1a",
+    margin: 0,
+  };
+
+  const bannerStyle: CSSProperties = {
+    backgroundColor: "var(--meduim-blue)",
+    borderRadius: "20px",
+    padding: "12px 24px",
     color: "#fff",
+    fontSize: "14px",
+    fontWeight: "500",
+    flex: 1,
+    textAlign: "center",
+    marginLeft: "auto",
   };
 
   const controlsStyle: CSSProperties = {
     display: "flex",
     gap: "15px",
     alignItems: "center",
-    marginBottom: "30px",
     flexWrap: "wrap",
   };
 
   const previewContainerStyle: CSSProperties = {
-    flex: 1,
     backgroundColor: "var(--dark-blue)",
-    borderRadius: "20px",
-    padding: "40px",
+    borderRadius: "16px",
+    padding: "30px",
     display: "flex",
     flexDirection: "column",
-    gap: "40px",
+    gap: "35px",
     border: "1px solid var(--meduim-blue)",
-    overflowY: "auto",
+    flex: 1,
+    overflow: "auto",
     position: "relative",
   };
 
-  const rowStyle: CSSProperties = {
+  const rowContainerStyle: CSSProperties = {
     display: "flex",
-    gap: "30px",
+    gap: "20px",
     alignItems: "center",
     justifyContent: "center",
+    position: "relative",
   };
 
   const stepBoxStyle = (completed: boolean): CSSProperties => ({
-    padding: "20px 30px",
+    padding: "16px 28px",
     backgroundColor: completed ? "var(--meduim-blue)" : "#BABABA",
-    color: completed ? "#fff" : "var(--bg-color)",
-    borderRadius: "20px",
+    color: completed ? "#fff" : "#0a0a0a",
+    borderRadius: "18px",
     cursor: "pointer",
-    fontSize: "14px",
+    fontSize: "13px",
     fontWeight: "600",
-    minWidth: "100px",
-    textAlign: "center",
+    border: "none",
     transition: "all 0.3s ease",
     opacity: completed ? 0.7 : 1,
     textDecoration: completed ? "line-through" : "none",
+    whiteSpace: "nowrap",
   });
 
   return (
@@ -203,98 +229,104 @@ export default function RoadmapDemoPage() {
 
       {/* Main Content */}
       <div style={mainStyle}>
-        {/* Header */}
-        <div style={headerStyle}>
-          <h1 style={titleStyle}>Roadmap</h1>
-        </div>
-
-        {/* Top Banner & Controls */}
-        <div style={{ display: "flex", gap: "20px", marginBottom: "25px", alignItems: "center" }}>
-          <select
-            style={{
-              padding: "12px 20px",
-              borderRadius: "25px",
-              border: "2px solid var(--form-grey)",
-              backgroundColor: "var(--dark-blue)",
-              color: "#fff",
-              cursor: "pointer",
-              fontSize: "14px",
-              fontFamily: "inherit",
-            }}
-          >
-            <option>Find a new path</option>
-          </select>
-
-          <div style={{ display: "flex", gap: "12px" }}>
-            {["UI/UX", "Frontend", "Backend"].map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                style={{
-                  padding: "10px 20px",
-                  borderRadius: "8px",
-                  border: "none",
-                  cursor: "pointer",
-                  backgroundColor: selectedCategory === cat ? "var(--primary-green)" : "var(--meduim-blue)",
-                  color: selectedCategory === cat ? "var(--bg-color)" : "#fff",
-                  fontSize: "14px",
-                  fontWeight: "600",
-                  transition: "all 0.2s ease",
-                }}
-              >
-                {cat}
-              </button>
-            ))}
+        {/* Folder Container */}
+        <div style={folderContainerStyle}>
+          {/* Header with Title and Banner */}
+          <div style={headerContainerStyle}>
+            <h1 style={titleStyle}>Roadmap</h1>
+            <div style={bannerStyle}>Discover where you stand...</div>
           </div>
 
-          <div style={{ marginLeft: "auto", padding: "10px 20px", backgroundColor: "var(--meduim-blue)", borderRadius: "25px", fontSize: "14px" }}>
-            Discover where you stand...
-          </div>
-        </div>
+          {/* Controls */}
+          <div style={controlsStyle}>
+            <select
+              style={{
+                padding: "10px 18px",
+                borderRadius: "20px",
+                border: "2px solid #666",
+                backgroundColor: "#8a8a8a",
+                color: "#fff",
+                cursor: "pointer",
+                fontSize: "13px",
+                fontFamily: "inherit",
+              }}
+            >
+              <option>Find a new path</option>
+            </select>
 
-        {/* Roadmap Preview */}
-        <div style={previewContainerStyle}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-            <h2 style={{ fontSize: "18px", fontWeight: "600", margin: 0 }}>Roadmap Preview</h2>
             <div style={{ display: "flex", gap: "10px" }}>
-              <button style={{ width: "36px", height: "36px", backgroundColor: "var(--meduim-blue)", border: "1px solid var(--form-grey)", borderRadius: "6px", color: "#fff", cursor: "pointer", fontSize: "16px" }}>
-                ⛶
-              </button>
-              <button style={{ width: "36px", height: "36px", backgroundColor: "var(--meduim-blue)", border: "1px solid var(--form-grey)", borderRadius: "6px", color: "#fff", cursor: "pointer", fontSize: "16px" }}>
-                📌
-              </button>
-            </div>
-          </div>
-
-          {currentFlow.map((row, rowIndex) => (
-            <div key={rowIndex} style={rowStyle}>
-              {row.steps.map((step, stepIndex) => (
-                <div key={step.id}>
-                  <button
-                    onClick={() => toggleStep(step.id)}
-                    style={stepBoxStyle(completedSteps.has(step.id))}
-                  >
-                    {step.label}
-                  </button>
-                  {stepIndex < row.steps.length - 1 && (
-                    <svg
-                      style={{
-                        position: "absolute",
-                        width: "40px",
-                        height: "60px",
-                        marginLeft: "-20px",
-                        marginTop: "-30px",
-                      }}
-                      viewBox="0 0 40 60"
-                      preserveAspectRatio="none"
-                    >
-                      <path d="M 0 30 Q 20 0, 40 30" stroke="#b8d9f6" strokeWidth="2" fill="none" />
-                    </svg>
-                  )}
-                </div>
+              {["UI/UX", "Frontend", "Backend"].map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  style={{
+                    padding: "8px 18px",
+                    borderRadius: "6px",
+                    border: "none",
+                    cursor: "pointer",
+                    backgroundColor: selectedCategory === cat ? "var(--primary-green)" : "var(--meduim-blue)",
+                    color: selectedCategory === cat ? "#1a1a1a" : "#fff",
+                    fontSize: "13px",
+                    fontWeight: "600",
+                    transition: "all 0.2s ease",
+                  }}
+                >
+                  {cat}
+                </button>
               ))}
             </div>
-          ))}
+
+            <button style={{ marginLeft: "auto", padding: "8px 16px", color: "var(--meduim-blue)", cursor: "pointer", fontSize: "16px", background: "none", border: "none" }}>
+              ⟩
+            </button>
+          </div>
+
+          {/* Roadmap Preview */}
+          <div style={previewContainerStyle}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h2 style={{ fontSize: "16px", fontWeight: "600", margin: 0, color: "#fff" }}>Roadmap Preview</h2>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <button style={{ width: "32px", height: "32px", backgroundColor: "transparent", border: "1px solid var(--meduim-blue)", borderRadius: "4px", color: "#fff", cursor: "pointer", fontSize: "14px" }}>
+                  ⛶
+                </button>
+                <button style={{ width: "32px", height: "32px", backgroundColor: "transparent", border: "1px solid var(--meduim-blue)", borderRadius: "4px", color: "#fff", cursor: "pointer", fontSize: "14px" }}>
+                  🔖
+                </button>
+              </div>
+            </div>
+
+            {currentFlow.map((row, rowIndex) => (
+              <div key={rowIndex} style={rowContainerStyle}>
+                {row.steps.map((step, stepIndex) => (
+                  <div key={step.id} style={{ position: "relative", display: "flex", alignItems: "center" }}>
+                    <button
+                      onClick={() => toggleStep(step.id)}
+                      style={stepBoxStyle(completedSteps.has(step.id))}
+                    >
+                      {step.label}
+                    </button>
+                    {stepIndex < row.steps.length - 1 && (
+                      <svg
+                        width="45"
+                        height="45"
+                        style={{ position: "absolute", left: "100%", top: "50%", transform: "translateY(-50%)" }}
+                        viewBox="0 0 45 45"
+                        preserveAspectRatio="none"
+                      >
+                        <path
+                          d="M 0 22.5 Q 22.5 5, 45 22.5"
+                          stroke="#B8D9F6"
+                          strokeWidth="2.5"
+                          fill="none"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
