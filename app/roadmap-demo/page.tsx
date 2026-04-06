@@ -95,7 +95,7 @@ export default function RoadmapDemoPage() {
     position: "fixed",
     inset: 0,
     overflow: "hidden",
-    backgroundColor: "#0a0e27",
+    backgroundColor: "var(--bg-color)",
     display: "flex",
     color: "#fff",
     fontFamily: "var(--font-jura), system-ui, sans-serif",
@@ -103,8 +103,8 @@ export default function RoadmapDemoPage() {
 
   const sidebarStyle: CSSProperties = {
     width: "140px",
-    backgroundColor: "#0a0e27",
-    borderRight: "1px solid rgba(255, 255, 255, 0.1)",
+    backgroundColor: "var(--bg-color)",
+    borderRight: "1px solid var(--form-grey)",
     padding: "20px 10px",
     display: "flex",
     flexDirection: "column",
@@ -129,6 +129,7 @@ export default function RoadmapDemoPage() {
     fontWeight: "bold",
     marginBottom: "10px",
     fontFamily: "var(--font-nova-square)",
+    color: "#fff",
   };
 
   const controlsStyle: CSSProperties = {
@@ -141,13 +142,13 @@ export default function RoadmapDemoPage() {
 
   const previewContainerStyle: CSSProperties = {
     flex: 1,
-    backgroundColor: "#0f1929",
+    backgroundColor: "var(--dark-blue)",
     borderRadius: "20px",
     padding: "40px",
     display: "flex",
     flexDirection: "column",
     gap: "40px",
-    border: "1px solid rgba(255, 255, 255, 0.1)",
+    border: "1px solid var(--meduim-blue)",
     overflowY: "auto",
     position: "relative",
   };
@@ -161,8 +162,8 @@ export default function RoadmapDemoPage() {
 
   const stepBoxStyle = (completed: boolean): CSSProperties => ({
     padding: "20px 30px",
-    backgroundColor: completed ? "#4a5a8a" : "#b8d9f6",
-    color: completed ? "#fff" : "#0a0e27",
+    backgroundColor: completed ? "var(--meduim-blue)" : "#BABABA",
+    color: completed ? "#fff" : "var(--bg-color)",
     borderRadius: "20px",
     cursor: "pointer",
     fontSize: "14px",
@@ -191,7 +192,7 @@ export default function RoadmapDemoPage() {
                 fontSize: "12px",
                 cursor: "pointer",
                 backgroundColor: item === "Roadmap" ? "rgba(184, 239, 70, 0.2)" : "transparent",
-                color: item === "Roadmap" ? "#B8EF46" : "#999",
+                color: item === "Roadmap" ? "var(--primary-green)" : "var(--text-grey)",
               }}
             >
               {item}
@@ -213,8 +214,8 @@ export default function RoadmapDemoPage() {
             style={{
               padding: "12px 20px",
               borderRadius: "25px",
-              border: "2px solid #666",
-              backgroundColor: "#1a1f3a",
+              border: "2px solid var(--form-grey)",
+              backgroundColor: "var(--dark-blue)",
               color: "#fff",
               cursor: "pointer",
               fontSize: "14px",
@@ -234,8 +235,8 @@ export default function RoadmapDemoPage() {
                   borderRadius: "8px",
                   border: "none",
                   cursor: "pointer",
-                  backgroundColor: selectedCategory === cat ? "#B8EF46" : "#2c5aa0",
-                  color: selectedCategory === cat ? "#000" : "#fff",
+                  backgroundColor: selectedCategory === cat ? "var(--primary-green)" : "var(--meduim-blue)",
+                  color: selectedCategory === cat ? "var(--bg-color)" : "#fff",
                   fontSize: "14px",
                   fontWeight: "600",
                   transition: "all 0.2s ease",
@@ -246,7 +247,7 @@ export default function RoadmapDemoPage() {
             ))}
           </div>
 
-          <div style={{ marginLeft: "auto", padding: "10px 20px", backgroundColor: "#2c5aa0", borderRadius: "25px", fontSize: "14px" }}>
+          <div style={{ marginLeft: "auto", padding: "10px 20px", backgroundColor: "var(--meduim-blue)", borderRadius: "25px", fontSize: "14px" }}>
             Discover where you stand...
           </div>
         </div>
@@ -256,10 +257,10 @@ export default function RoadmapDemoPage() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
             <h2 style={{ fontSize: "18px", fontWeight: "600", margin: 0 }}>Roadmap Preview</h2>
             <div style={{ display: "flex", gap: "10px" }}>
-              <button style={{ width: "36px", height: "36px", backgroundColor: "#1a1f3a", border: "1px solid #666", borderRadius: "6px", color: "#fff", cursor: "pointer", fontSize: "16px" }}>
+              <button style={{ width: "36px", height: "36px", backgroundColor: "var(--meduim-blue)", border: "1px solid var(--form-grey)", borderRadius: "6px", color: "#fff", cursor: "pointer", fontSize: "16px" }}>
                 ⛶
               </button>
-              <button style={{ width: "36px", height: "36px", backgroundColor: "#1a1f3a", border: "1px solid #666", borderRadius: "6px", color: "#fff", cursor: "pointer", fontSize: "16px" }}>
+              <button style={{ width: "36px", height: "36px", backgroundColor: "var(--meduim-blue)", border: "1px solid var(--form-grey)", borderRadius: "6px", color: "#fff", cursor: "pointer", fontSize: "16px" }}>
                 📌
               </button>
             </div>
